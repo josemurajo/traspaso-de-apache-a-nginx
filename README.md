@@ -1,54 +1,47 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-# traspaso-de-apache-a-nginx
-Proyecto de despliegue de servidores Nginx - ASIR
-# Proyecto de Despliegue: Servidor Nginx 
-[cite_start]**Empresa:** Servicios Web RC, S.A (Huelva)   
-**Autor:** JOSE MURILLO RAJO  
+# Informe de Despliegue de Servidores Nginx
+
+**Empresa:** Servicios Web RC, S.A (Huelva) 
+**Autor:** Jose Murillo Rajo 
 **Curso:** CFGS ASIR
-=======
-# Informe de Migración: Servidor Nginx 
-**Empresa:** Servicios Web RC, S.A (Huelva)
-**Autor:** Jose
->>>>>>> 5460c92 (Instalación de Nginx y configuración inicial del informe)
-=======
-# Proyecto de Migración: Servidor Nginx
-[cite_start]**Empresa:** Servicios Web RC, S.A (Huelva) [cite: 2]
-**Consultor:** Jose
->>>>>>> 7746f8b (Primer Commit: Estructura del informe, introduccion y comparativa)
 
 ---
 
-##  Índice
-1. [Introducción](#intro)
-2. [Comparativa con Apache](#comp)
-3. [Esquema de red](#red)
-4. [Instalación](#inst)
+## Índice
+1. [Introducción](#introduccion)
+2. [Comparativa con Apache](#comparativa)
+3. [Esquema de Red](#esquema)
+4. [Instalación](#instalacion)
 5. [Casos Prácticos](#casos)
-6. [Referencias](#ref)
+    * [a) Versión y b) Servicio](#caso-ab)
+    * [c) Ficheros de configuración](#caso-c)
+    * [d) Página por defecto](#caso-d)
+    * [e) Virtual Hosting](#caso-e)
+    * [f) Control de acceso por red](#caso-f)
+    * [g) y h) Autenticación en directorio privado](#caso-gh)
+    * [i) Seguridad SSL/TLS](#caso-i)
+6. [Referencias](#referencias)
 
 ---
 
-<a name="intro"></a>
+<a name="introduccion"></a>
 ## 1. Introducción
-[cite_start]Este informe detalla la migración de Apache a Nginx para Servicios Web RC, S.A.[cite: 2, 3]. [cite_start]Se analiza su arquitectura orientada a eventos para mejorar el rendimiento[cite: 4].
+Este informe técnico detalla la migración de la infraestructura de servidores web de la empresa Servicios Web RC, S.A., pasando de una arquitectura basada en Apache a Nginx. El objetivo es aprovechar la arquitectura de Nginx para mejorar la eficiencia en el manejo de conexiones concurrentes.
 
-<a name="comp"></a>
+<a name="comparativa"></a>
 ## 2. Comparativa con Apache
-[cite_start]Nginx destaca en el manejo de contenido estático y concurrencia comparado con Apache[cite: 9]:
-- **Nginx:** Arquitectura asíncrona basada en eventos. [cite_start]Consume menos RAM[cite: 9].
-- **Apache:** Arquitectura basada en procesos. [cite_start]Mayor flexibilidad con ficheros .htaccess[cite: 9].
+* **Arquitectura:** Apache utiliza un modelo basado en procesos (un hilo por conexión), mientras que Nginx utiliza una arquitectura orientada a eventos asíncrona.
+* **Consumo de recursos:** Nginx consume significativamente menos memoria RAM bajo cargas elevadas de usuarios.
+* **Contenido estático:** Nginx es considerablemente más rápido sirviendo archivos estáticos (HTML, imágenes).
 
-<a name="red"></a>
+<a name="esquema"></a>
 ## 3. Esquema de Red
-[cite_start]El servidor se configura con dos interfaces de red físicas[cite: 10, 11]:
-- **Interfaz Externa:** Acceso público a los servicios.
-- **Interfaz Interna:** Acceso privado para administración interna.
+El servidor Nginx está configurado con dos tarjetas de red para segmentar el tráfico:
+* **Interfaz Externa:** Conectada a la red pública para acceso general.
+* **Interfaz Interna:** Conectada a la red local de la oficina para tareas administrativas y servicios internos.
 
-
-
-<a name="inst"></a>
+<a name="instalacion"></a>
 ## 4. Instalación
-[cite_start]Se instala Nginx en el sistema Debian/Ubuntu mediante el comando[cite: 12]:
+Para instalar Nginx en un sistema basado en Debian/Ubuntu, se ejecutan los siguientes comandos:
 ```bash
-sudo apt update && sudo apt install nginx -y
+sudo apt update
+sudo apt install nginx -y
