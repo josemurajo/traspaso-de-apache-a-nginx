@@ -2,7 +2,7 @@
 Proyecto de despliegue de servidores Nginx - ASIR
 # Proyecto de Despliegue: Servidor Nginx 
 [cite_start]**Empresa:** Servicios Web RC, S.A (Huelva)   
-**Autor:** [Tu Nombre]  
+**Autor:** JOSE MURILLO RAJO  
 **Curso:** CFGS ASIR
 
 ---
