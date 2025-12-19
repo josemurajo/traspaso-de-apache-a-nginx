@@ -75,10 +75,10 @@ Los ficheros principales para la gestión del servidor son:
 ### d) Página por defecto
 Se ha personalizado la página de bienvenida en `/var/www/html/index.nginx-debian.html`:
 
-<h1>Bienvenidos a Mi servidor web</h1> <p>Tu Nombre: Jose Murillo Rajo</p>
 
 
-&lt;a name=&quot;caso-e&quot;&gt;&lt;/a&gt;
+
+
 
 ### e) Virtual Hosting
 
