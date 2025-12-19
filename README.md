@@ -1,8 +1,4 @@
-Aquí tienes el código Markdown completo y profesional para tu README.md, estructurado para cumplir con todos los puntos de la rúbrica de tu ejercicio. He eliminado las etiquetas de lenguaje dentro de los bloques de código para evitar los fallos de visualización que mencionabas.
 
-Copia y pega este contenido íntegro:
-
-Markdown
 
 # Informe de Despliegue de Servidores Nginx
 
