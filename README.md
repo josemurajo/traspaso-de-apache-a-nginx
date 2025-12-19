@@ -44,7 +44,7 @@ El servidor cuenta con dos interfaces:
 
 <a name="instalacion"></a>
 ## 4. Instalación
-```bash
+
 sudo apt update && sudo apt install nginx -y
 <a name="casos"></a>
 
@@ -54,7 +54,7 @@ sudo apt update && sudo apt install nginx -y
 a) Versión y b) Servicio
 Comprobación de la instalación y el estado del demonio:
 
-Bash
+
 
 # Verificar versión instalada
 nginx -v
@@ -75,7 +75,7 @@ c) Ficheros de configuración
 d) Página por defecto
 Personalización del archivo /var/www/html/index.nginx-debian.html:
 
-HTML
+
 
 <h1>Bienvenidos a Mi servidor web</h1>
 <p>Tu Nombre: Jose Murillo Rajo</p>
@@ -86,7 +86,7 @@ Configuración de dos sitios con nombres distintos compartiendo IP y puerto 80.
 
 Configuración www.web1.org:
 
-Nginx
+
 
 server {
     listen 80;
@@ -96,7 +96,6 @@ server {
 }
 Configuración www.web2.org:
 
-Nginx
 
 server {
     listen 80;
@@ -109,7 +108,7 @@ server {
 f) Control de acceso por red
 Restricción para que www.web2.org sea accesible solo desde la red interna:
 
-Nginx
+
 
 server {
     listen 80;
@@ -125,7 +124,7 @@ server {
 g) y h) Autenticación en directorio privado
 Acceso condicional para el directorio /privado en www.web1.org:
 
-Nginx
+
 
 location /privado {
     satisfy any;
@@ -144,7 +143,7 @@ location /privado {
 i) Seguridad SSL/TLS
 Configuración de acceso seguro mediante HTTPS:
 
-Nginx
+
 
 server {
     listen 443 ssl;
