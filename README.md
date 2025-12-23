@@ -1,176 +1,159 @@
-
-
 # Informe de Despliegue de Servidores Nginx
 
+**Nombre:** Jose Murillo Rajo  
 **Empresa:** Servicios Web RC, S.A (Sevilla)  
-**Autor:** Jose Murillo Rajo  
 **Curso:** CFGS ASIR  
 
 ---
 
 ## Índice
-1. [Introducción](#introduccion)
-2. [Comparativa con Apache](#comparativa)
-3. [Esquema de Red](#esquema)
-4. [Instalación](#instalacion)
-5. [Casos Prácticos](#casos)
-    * [a) Versión y b) Servicio](#caso-ab)
-    * [c) Ficheros de configuración](#caso-c)
-    * [d) Página por defecto](#caso-d)
-    * [e) Virtual Hosting](#caso-e)
-    * [f) Control de acceso por red](#caso-f)
-    * [g) y h) Autenticación en directorio privado](#caso-gh)
-    * [i) Seguridad SSL/TLS](#caso-i)
-6. [Referencias](#referencias)
+1. [Introducción](#1-introducción)
+2. [Comparativa con Apache](#2-comparativa-con-apache)
+3. [Esquema de Red](#3-esquema-de-red)
+4. [Instalación](#4-instalación)
+5. [Casos Prácticos](#5-casos-prácticos)
+    * [Virtual Hosting](#virtual-hosting)
+    * [Autorización por Red](#autorización-por-red)
+    * [Autorización en Directorio Privado](#autorización-en-directorio-privado)
+    * [Seguridad SSL/TLS](#seguridad-ssltls)
+6. [Scripts de Despliegue](#6-scripts-de-despliegue)
+7. [Referencias](#7-referencias)
 
 ---
 
-<a name="introduccion"></a>
 ## 1. Introducción
-Este informe técnico documenta el proceso de migración de la infraestructura de servidores web de la empresa Servicios Web RC, S.A., sustituyendo el anterior servidor Apache por Nginx para optimizar el rendimiento y la escalabilidad del sistema.
+Este proyecto documenta la migración y despliegue de un servidor Nginx diseñado para gestionar múltiples dominios con diferentes niveles de seguridad y acceso.
 
-<a name="comparativa"></a>
 ## 2. Comparativa con Apache
-* **Arquitectura:** Nginx utiliza un modelo asíncrono basado en eventos, mientras que Apache se basa en procesos o hilos.
-* **Consumo de Recursos:** Nginx mantiene un consumo de memoria bajo y constante incluso con altas cargas de usuarios concurrentes.
-* **Gestión de Estáticos:** Nginx es significativamente más rápido sirviendo archivos estáticos (HTML, CSS, imágenes).
+* **Arquitectura:** Nginx usa un modelo basado en eventos (más ligero).
+* **Rendimiento:** Mejor gestión de conexiones simultáneas que Apache.
 
-| Característica | Nginx | Apache |
-| :--- | :--- | :--- |
-| **Arquitectura** | Event-driven (asíncrona). | Basada en procesos/hilos. |
-| **Consumo RAM** | Bajo y constante. | Aumenta con el número de conexiones. |
-| **Uso principal** | Contenido estático y Proxy. | Contenido dinámico y hosting flexible. |
-<a name="esquema"></a>
 ## 3. Esquema de Red
-El servidor está configurado con dos tarjetas de red para segmentar el tráfico según los requerimientos de seguridad:
-* **Tarjeta Interna:** Para acceso restringido y administración local.
-* **Tarjeta Externa:** Para el acceso de clientes externos a los servicios web públicos.
+Servidor con doble interfaz de red:
+* **Interna:** Administración y red local confiable.
+* **Externa:** Tráfico público de Internet.
 
-<a name="instalacion"></a>
+
+
 ## 4. Instalación
-Para instalar Nginx en el sistema se ha utilizado el gestor de paquetes oficial:
 
 sudo apt update && sudo apt install nginx -y
-
-
----
-
-<a name="casos"></a>
 ## 5. Casos Prácticos
+<a name="virtual-hosting"></a>
 
-<a name="caso-ab"></a>
-### a) Versión y b) Servicio
-Comprobación de la versión del software y estado actual del demonio:
+Virtual Hosting
+Se han configurado dos sitios virtuales accesibles por nombre de dominio:
 
-Comprobar versión instalada
-nginx -v
+Sitio 1: www.web1.org -> [Configuración Sitio 1](./web1.conf)
 
-Comprobar que el servicio está activo
-systemctl status nginx
-
-
-<a name="caso-c"></a>
-### c) Ficheros de configuración
-Los ficheros principales para la gestión del servidor son:
-* `/etc/nginx/nginx.conf`: Fichero de configuración global.
-* `/etc/nginx/sites-available/`: Directorio donde se definen los sitios virtuales.
-* `/etc/nginx/sites-enabled/`: Enlaces simbólicos para activar los sitios en el servidor.
-Los ficheros principales para la gestión del servidor en este proyecto son:
-
-sitio web1 [Configuración Sitio 1](./web1.conf)
-
-sitio web2 [Configuración Sitio 2](./web2.conf)
-
-
-<a name="caso-d"></a>
-### d) Página por defecto
-Se personaliza la página de bienvenida en
-
-`/var/www/html/index.nginx-debian.html`:
+Sitio 2: www.web2.org -> [Configuración Sitio 2](./web2.conf)
 
 
 
-<a name="caso-e"></a>
 
+<a name="autorización-por-red"></a>
 
-### e) Virtual Hosting
+Autorización por Red
+Siguiendo los requisitos de seguridad:
 
-Configuración de dos dominios distintos compartiendo la misma IP y puerto 80.
+Red Interna: Tiene acceso total a ambos dominios.
 
-**Dominio www.web1.org:**
+Red Externa: Puede acceder a www.web1.org, pero tiene el acceso denegado a www.web2.org.
 
-server { listen 80; 
+esto se ve en: [web2.conf](./web2.conf)
 
-server_name www.web1.org;
-
-root /var/www/web1; 
-
-index index.html; }
-
-
-**Dominio www.web2.org:**
-
-server { listen 80; server_name www.web2.org; root /var/www/web2; index index.html; }
-
-
-<a name="caso-f"></a>
-
-### f) Control de acceso por red
-
-Configuración para restringir el acceso a `www.web2.org` exclusivamente a la red interna:
-
-server { listen 80; server_name www.web2.org; root /var/www/web2;
 
 allow 192.168.1.0/24; # Red interna
+
 allow 127.0.0.1;
-deny all;
-}
+
+deny all;             # Bloqueo para red externa
+<a name="autorización-en-directorio-privado"></a>
+
+## Autorización en Directorio Privado
+### Configuración del acceso al directorio web1/privado/:
+
+Cliente Red Interna: Accede sin pedir credenciales.
+
+Cliente Red Externa: Se le solicitan credenciales de acceso.
+
+Código aplicado en: [web1.conf](./web1.conf):
 
 
-<a name="caso-gh"></a>
-### g) y h) Autenticación en directorio privado
-
-Se implementa un acceso condicional al directorio `/privado` en `www.web1.org`. La red interna accede libremente (h), mientras que la externa requiere credenciales (g):
 
 location /privado {
-satisfy any;
 
-# Permitir acceso sin pass desde red interna
-allow 192.168.1.0/24;
-
-allow 127.0.0.1;
-
-deny all;
-
-# Requerir autenticación básica para red externa
-auth_basic "Acceso Restringido";
-
-auth_basic_user_file /etc/nginx/.htpasswd;
+    satisfy any;
+    
+    allow 192.168.1.0/24; # Acceso libre interna
+    
+    deny all;
+    
+    auth_basic "Acceso Restringido";
+    
+    auth_basic_user_file /etc/nginx/.htpasswd; # Ver fichero [.htpasswd](./.htpasswd)
+    
 }
 
+<a name="seguridad-ssltls"></a>
 
 
-<a name="caso-i"></a>
-### i) Seguridad SSL/TLS
+## Seguridad SSL/TLS
+### Configuración del sitio https://www.web1.org para asegurar la comunicación.
+#### Generación de Certificados SSL/TLS (OpenSSL)
+Para habilitar el protocolo HTTPS en el sitio www.web1.org, se deben generar el certificado público y la clave privada siguiendo estos pasos:
 
-Configuración del sitio `www.web1.org` para comunicación cifrada mediante HTTPS:
-
-server { listen 443 ssl;
-server_name www.web1.org;
-
-ssl_certificate /etc/ssl/certs/web1.crt;
-ssl_certificate_key /etc/ssl/private/web1.key;
-
-root /var/www/web1;
-index index.html;
-}
+##### 1. Instalación de la herramienta
+Primero, asegúrate de tener instalado el paquete OpenSSL en tu sistema Linux:
 
 
------
+sudo apt update && sudo apt install openssl -y
+##### 2. Ejecución del comando de generación
+Utilizaremos un único comando para crear ambos archivos (web1.key y web1.crt). Ejecuta lo siguiente en la terminal:
 
-<a name="referencias"></a>
-## 6\. Referencias
 
-  * [Documentación oficial de Nginx](https://nginx.org/en/docs/)
-  * Manual de Administración de Sistemas Operativos - CFGS ASIR
-  * Repositorio del proyecto en GitHub: https://github.com/josemurajo/traspaso-de-apache-a-nginx
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout web1.key -out web1.crt
+##### 3. Explicación de los parámetros utilizados:
+req -x509: Especifica que queremos crear un certificado autofirmado estándar.
+
+-nodes: (No DES) Evita que la clave privada se cifre con una contraseña. Esto es fundamental para que Nginx pueda leer la clave y arrancar el servicio automáticamente sin intervención humana.
+
+-days 365: Define la duración de la validez del certificado (un año).
+
+-newkey rsa:2048: Genera simultáneamente una nueva clave RSA de 2048 bits.
+
+-keyout web1.key: Define el nombre del archivo de la clave privada.
+
+-out web1.crt: Define el nombre del archivo del certificado público.
+
+##### 4. Configuración del Common Name (CN)
+Al ejecutar el comando, la terminal te pedirá varios datos (País, Provincia, Organización, etc.). El campo más importante es el Common Name (e.g. server FQDN or YOUR name).
+
+Importante:se debe de  escribir exactamente el dominio: www.web1.org. Si no coincide, el navegador mostrará un error de nombre de host no válido.
+
+##### 5. Ubicación en el servidor
+Una vez que tenemos generados los ficheros en tu carpeta de trabajo, para que Nginx los utilice deben estar ubicados en las rutas estándar de seguridad:
+
+Clave privada: /etc/ssl/private/web1.key
+
+Certificado: /etc/ssl/certs/web1.crt
+
+[Certificado (web1.crt)](./web1.crt)
+
+[Clave privada (web1.key)](./web1.key)
+
+[usuario y contraseña para la autenticacion](./.htpasswd)
+
+
+
+## 6. Scripts de Despliegue
+Para cumplir con la automatización del despliegue:
+
+[para un deplay rapido](./desplegar_todo.sh)
+
+[para ir subiendo al github](./subir.sh)
+
+## 7. Referencias
+Nginx Documentation
+
+Configuring HTTPS servers
