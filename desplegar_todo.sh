@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # 1. LIMPIEZA TOTAL
-echo "--- Limpiando configuración previa ---"
+echo "--- Limpiamos configuración previa ---"
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo rm -f /etc/nginx/sites-enabled/web1.conf
 sudo rm -f /etc/nginx/sites-enabled/web2.conf
 sudo rm -rf /var/www/web1 /var/www/web2
 
 # 2. CREACIÓN DE ESTRUCTURA Y CONTENIDO
-echo "--- Creando directorios y archivos HTML ---"
+echo "--- Creamos directorios y archivos HTML ---"
 sudo mkdir -p /var/www/web1/privado
 sudo mkdir -p /var/www/web2
 
@@ -17,19 +17,23 @@ echo "<h1>Zona privada de Web1</h1>" | sudo tee /var/www/web1/privado/index.html
 echo "<h1>Bienvenida a la página web2</h1>" | sudo tee /var/www/web2/index.html
 
 # 3. SEGURIDAD: SSL Y CONTRASEÑAS
-echo "--- Generando certificados SSL y contraseñas ---"
+echo "--- Generamos certificados SSL y contraseñas ---"
 # Certificado para web1.org
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout /etc/ssl/private/web1.key \
   -out /etc/ssl/certs/web1.crt \
-  -subj "/C=ES/ST=Andalucia/L=Huelva/O=Servicios Web RC/CN=www.web1.org"
+  -subj "/C=ES/ST=Andalucia/L=Sevilla/O=Servicios Web RC/CN=www.web1.org"
 
-# Usuario jose / password jose1234
-sudo apt install apache2-utils -y
+# Instalamos utilidades y generamos el acceso
+sudo apt-get update && sudo apt-get install apache2-utils -y
 sudo htpasswd -b -c /etc/nginx/.htpasswd jose jose1234
 
+# Ajustamos permisos para que Nginx pueda leer el archivo de claves
+sudo chmod 644 /etc/nginx/.htpasswd
+sudo chown www-data:www-data /etc/nginx/.htpasswd
+
 # 4. CONFIGURACIÓN DE NGINX
-echo "--- Creando archivos de configuración ---"
+echo "--- Creamos archivos de configuración ---"
 
 # Archivo web1.conf
 cat <<EOF > web1.conf
@@ -45,9 +49,10 @@ server {
     index index.html;
 
     location /privado {
-        satisfy any;
-        allow 192.168.1.0/24;
-        allow 127.0.0.1;
+# las lineas comentadas es para que te ppida autenticacion si las borras deja de peditelo    
+#       satisfy any;
+#       allow 192.168.1.0/24;
+#       allow 127.0.0.1;
         auth_basic "Acceso Restringido";
         auth_basic_user_file /etc/nginx/.htpasswd;
     }
@@ -81,4 +86,4 @@ if ! grep -q "www.web1.org" /etc/hosts; then
 fi
 
 sudo nginx -t && sudo systemctl restart nginx
-echo "--- DESPLIEGUE COMPLETADO CON ÉXITO ---"
+echo "--- Todo terminado y listo para probar ---"
