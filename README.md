@@ -73,7 +73,9 @@ Los ficheros principales para la gestión del servidor son:
 
 <a name="caso-d"></a>
 ### d) Página por defecto
-Se ha personalizado la página de bienvenida en `/var/www/html/index.nginx-debian.html`:
+Se personaliza la página de bienvenida en
+
+`/var/www/html/index.nginx-debian.html`:
 
 
 
@@ -86,7 +88,13 @@ Configuración de dos dominios distintos compartiendo la misma IP y puerto 80.
 
 **Dominio www.web1.org:**
 
-server { listen 80; server_name www.web1.org; root /var/www/web1; index index.html; }
+server { listen 80; 
+
+server_name www.web1.org;
+
+root /var/www/web1; 
+
+index index.html; }
 
 
 **Dominio www.web2.org:**
@@ -94,7 +102,7 @@ server { listen 80; server_name www.web1.org; root /var/www/web1; index index.ht
 server { listen 80; server_name www.web2.org; root /var/www/web2; index index.html; }
 
 
-&lt;a name=&quot;caso-f&quot;&gt;&lt;/a&gt;
+
 
 ### f) Control de acceso por red
 
@@ -108,32 +116,36 @@ deny all;
 }
 
 
-&lt;a name=&quot;caso-gh&quot;&gt;&lt;/a&gt;
 
 ### g) y h) Autenticación en directorio privado
 
 Se implementa un acceso condicional al directorio `/privado` en `www.web1.org`. La red interna accede libremente (h), mientras que la externa requiere credenciales (g):
 
-location /privado { satisfy any;
+location /privado {
+satisfy any;
 
 # Permitir acceso sin pass desde red interna
 allow 192.168.1.0/24;
+
 allow 127.0.0.1;
+
 deny all;
 
 # Requerir autenticación básica para red externa
 auth_basic "Acceso Restringido";
+
 auth_basic_user_file /etc/nginx/.htpasswd;
 }
 
 
-&lt;a name=&quot;caso-i&quot;&gt;&lt;/a&gt;
+
 
 ### i) Seguridad SSL/TLS
 
 Configuración del sitio `www.web1.org` para comunicación cifrada mediante HTTPS:
 
-server { listen 443 ssl; server_name www.web1.org;
+server { listen 443 ssl;
+server_name www.web1.org;
 
 ssl_certificate /etc/ssl/certs/web1.crt;
 ssl_certificate_key /etc/ssl/private/web1.key;
@@ -145,7 +157,6 @@ index index.html;
 
 -----
 
-&lt;a name=&quot;referencias&quot;&gt;&lt;/a&gt;
 
 ## 6\. Referencias
 
