@@ -1,8 +1,5 @@
 
-c) Ficheros de configuración
-📄 Configuración Sitio 1
 
-📄 Configuración Sitio 2
 # Informe de Despliegue de Servidores Nginx
 
 **Empresa:** Servicios Web RC, S.A (Sevilla)  
@@ -80,11 +77,11 @@ Los ficheros principales para la gestión del servidor son:
 * `/etc/nginx/sites-enabled/`: Enlaces simbólicos para activar los sitios en el servidor.
 Los ficheros principales para la gestión del servidor en este proyecto son:
 
-/etc/nginx/nginx.conf: Fichero de configuración global.
+sitio web1 [Configuración Sitio 1](./web1.conf)
 
-Sitio Web 1: web1.conf
+sitio web2 [Configuración Sitio 2](./web2.conf)
 
-Sitio Web 2: web2.conf
+
 <a name="caso-d"></a>
 ### d) Página por defecto
 Se personaliza la página de bienvenida en
