@@ -1,5 +1,8 @@
 
+c) Ficheros de configuración
+📄 Configuración Sitio 1
 
+📄 Configuración Sitio 2
 # Informe de Despliegue de Servidores Nginx
 
 **Empresa:** Servicios Web RC, S.A (Sevilla)  
