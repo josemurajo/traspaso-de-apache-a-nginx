@@ -86,4 +86,4 @@ if ! grep -q "www.web1.org" /etc/hosts; then
 fi
 
 sudo nginx -t && sudo systemctl restart nginx
-echo "--- Todo terminado y listo para probar ---"
+echo "--- Todo etsaria terminado y listo para probar ---"
