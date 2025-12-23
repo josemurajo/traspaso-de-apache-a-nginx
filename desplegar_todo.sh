@@ -49,7 +49,9 @@ server {
     index index.html;
 
     location /privado {
-# las lineas comentadas es para que te ppida autenticacion si las borras deja de peditelo    
+# si quieres hacer pruebas en el servidor comenta los allow o
+# si no no te deja comprovar si tiene contraseña o no  
+
         satisfy any;
         allow 192.168.1.0/24;
         allow 127.0.0.1;
