@@ -12,9 +12,9 @@ echo "--- Creamos directorios y archivos HTML ---"
 sudo mkdir -p /var/www/web1/privado
 sudo mkdir -p /var/www/web2
 
-echo "<h1>Bienvenida a la página web1</h1>" | sudo tee /var/www/web1/index.html
+echo "<h1>Bienvenida a la pagina web1</h1>" | sudo tee /var/www/web1/index.html
 echo "<h1>Zona privada de Web1</h1>" | sudo tee /var/www/web1/privado/index.html
-echo "<h1>Bienvenida a la página web2</h1>" | sudo tee /var/www/web2/index.html
+echo "<h1>Bienvenida a la pagina web2</h1>" | sudo tee /var/www/web2/index.html
 
 # 3. SEGURIDAD: SSL Y CONTRASEÑAS
 echo "--- Generamos certificados SSL y contraseñas ---"
