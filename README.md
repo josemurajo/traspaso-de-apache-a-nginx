@@ -215,4 +215,6 @@ Para cumplir con la automatización del despliegue:
 
 https://nginx.org/en/docs/beginners_guide.html
 
+https://www.digitalocean.com/community/tags/nginx
+
 [Configuring HTTPS servers](https://ssl-config.mozilla.org/#server=nginx&version=1.27.3&config=intermediate&openssl=3.4.0&guideline=5.7)
