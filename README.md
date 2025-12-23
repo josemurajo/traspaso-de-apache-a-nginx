@@ -2,7 +2,7 @@
 
 # Informe de Despliegue de Servidores Nginx
 
-**Empresa:** Servicios Web RC, S.A (Huelva)  
+**Empresa:** Servicios Web RC, S.A (Sevilla)  
 **Autor:** Jose Murillo Rajo  
 **Curso:** CFGS ASIR  
 
@@ -35,6 +35,11 @@ Este informe técnico documenta el proceso de migración de la infraestructura d
 * **Consumo de Recursos:** Nginx mantiene un consumo de memoria bajo y constante incluso con altas cargas de usuarios concurrentes.
 * **Gestión de Estáticos:** Nginx es significativamente más rápido sirviendo archivos estáticos (HTML, CSS, imágenes).
 
+| Característica | Nginx | Apache |
+| :--- | :--- | :--- |
+| **Arquitectura** | Event-driven (asíncrona). | Basada en procesos/hilos. |
+| **Consumo RAM** | Bajo y constante. | Aumenta con el número de conexiones. |
+| **Uso principal** | Contenido estático y Proxy. | Contenido dinámico y hosting flexible. |
 <a name="esquema"></a>
 ## 3. Esquema de Red
 El servidor está configurado con dos tarjetas de red para segmentar el tráfico según los requerimientos de seguridad:
@@ -70,7 +75,13 @@ Los ficheros principales para la gestión del servidor son:
 * `/etc/nginx/nginx.conf`: Fichero de configuración global.
 * `/etc/nginx/sites-available/`: Directorio donde se definen los sitios virtuales.
 * `/etc/nginx/sites-enabled/`: Enlaces simbólicos para activar los sitios en el servidor.
+Los ficheros principales para la gestión del servidor en este proyecto son:
 
+/etc/nginx/nginx.conf: Fichero de configuración global.
+
+Sitio Web 1: web1.conf
+
+Sitio Web 2: web2.conf
 <a name="caso-d"></a>
 ### d) Página por defecto
 Se personaliza la página de bienvenida en
