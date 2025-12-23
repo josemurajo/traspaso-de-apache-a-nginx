@@ -212,5 +212,7 @@ Para cumplir con la automatización del despliegue:
 
 ## 7. Referencias
 [Nginx Documentation](https://nginx.org/en/docs/)
+
 https://nginx.org/en/docs/beginners_guide.html
+
 [Configuring HTTPS servers](https://ssl-config.mozilla.org/#server=nginx&version=1.27.3&config=intermediate&openssl=3.4.0&guideline=5.7)
