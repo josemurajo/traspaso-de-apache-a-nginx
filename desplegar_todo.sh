@@ -50,9 +50,9 @@ server {
 
     location /privado {
 # las lineas comentadas es para que te ppida autenticacion si las borras deja de peditelo    
-#       satisfy any;
-#       allow 192.168.1.0/24;
-#       allow 127.0.0.1;
+        satisfy any;
+        allow 192.168.1.0/24;
+        allow 127.0.0.1;
         auth_basic "Acceso Restringido";
         auth_basic_user_file /etc/nginx/.htpasswd;
     }
