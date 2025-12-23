@@ -164,4 +164,4 @@ index index.html;
   * Manual de Administración de Sistemas Operativos - CFGS ASIR
   * Repositorio del proyecto en GitHub: https://github.com/josemurajo/traspaso-de-apache-a-nginx
 
-<!-- end list -->
+
