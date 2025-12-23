@@ -79,7 +79,7 @@ Se personaliza la página de bienvenida en
 
 
 
-
+<a name="caso-e"></a>
 
 
 ### e) Virtual Hosting
@@ -102,7 +102,7 @@ index index.html; }
 server { listen 80; server_name www.web2.org; root /var/www/web2; index index.html; }
 
 
-
+<a name="caso-f"></a>
 
 ### f) Control de acceso por red
 
@@ -116,7 +116,7 @@ deny all;
 }
 
 
-
+<a name="caso-gh"></a>
 ### g) y h) Autenticación en directorio privado
 
 Se implementa un acceso condicional al directorio `/privado` en `www.web1.org`. La red interna accede libremente (h), mientras que la externa requiere credenciales (g):
@@ -139,7 +139,7 @@ auth_basic_user_file /etc/nginx/.htpasswd;
 
 
 
-
+<a name="caso-i"></a>
 ### i) Seguridad SSL/TLS
 
 Configuración del sitio `www.web1.org` para comunicación cifrada mediante HTTPS:
@@ -157,7 +157,7 @@ index index.html;
 
 -----
 
-
+<a name="referencias"></a>
 ## 6\. Referencias
 
   * [Documentación oficial de Nginx](https://nginx.org/en/docs/)
