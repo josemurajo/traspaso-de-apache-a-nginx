@@ -116,13 +116,25 @@ El siguiente diagrama ilustra cómo Nginx filtra el tráfico dependiendo de la i
 
 
 ## 4. Instalación
-
-### Paso 1: Instalación del Servidor
+### paso1: cambiamos de apache a nginx
+* 1. Detener el servicio Apache
+  ```
+sudo systemctl stop apache2
+```
+* 2. Deshabilitar el arranque automático
+```
+sudo systemctl disable apache2
+```
+* 3.  Verificamos que los puertos 80/443 están libres
+```
+sudo lsof -i :80
+```
+### Paso 2: Instalación del Servidor
 Actualizamos los repositorios e instalamos el paquete de Nginx:
 ```
 sudo apt update && sudo apt install nginx -y
 ```
-### Paso 2: Creación de la Estructura de Directorios
+### Paso 3: Creación de la Estructura de Directorios
 
 Creamos las carpetas donde se alojarán los archivos HTML de cada sitio, incluyendo el directorio protegido:
 ```
@@ -132,7 +144,7 @@ sudo mkdir -p /var/www/web2
 ```
 Puedes ver un ejemplo del contenido aquí: [index.html](./web2/index.html) de [index.html](./web1/privado/index.html)
 
-### Paso 3: Despliegue de Configuraciones (Virtual Hosts)
+### Paso 4: Despliegue de Configuraciones (Virtual Hosts)
 
 Se deben copiar los archivos de configuración del repositorio a la ruta de Nginx y crear los enlaces simbólicos para activarlos:
 
@@ -146,7 +158,7 @@ sudo ln -s /etc/nginx/sites-available/web1.conf /etc/nginx/sites-enabled/
 
 sudo ln -s /etc/nginx/sites-available/web2.conf /etc/nginx/sites-enabled/
 ```
-### Paso 4: Configuración de Seguridad (SSL y Usuarios)
+### Paso 5: Configuración de Seguridad (SSL y Usuarios)
 
 #### Generación de Certificados SSL/TLS (OpenSSL)
 Para habilitar el protocolo HTTPS en el sitio www.web1.org, se deben generar el [Certificado publico](./web1.crt) y la [Clave privada ](./web1.key) siguiendo estos pasos:
@@ -295,7 +307,16 @@ para hecer un deploy mas dinamico para la empresa
 [para ir subiendo al github](./subir.sh)
 
 ## 7. Referencias
+
+https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms-es
+
+https://help.dreamhost.com/hc/es/articles/222784068-Los-pasos-m%C3%A1s-importantes-a-seguir-para-hacer-que-un-servidor-Nginx-sea-m%C3%A1s-seguro
+
 [Nginx Documentation](https://nginx.org/en/docs/)
+
+https://raiolanetworks.com/blog/nginx-vs-apache-cual-es-mejor-servidor-web/#cual-es-la-diferencia-entre-apache-y-nginx
+
+https://www.plesk.com/blog/various/nginx-configuration-guide/
 
 https://nginx.org/en/docs/beginners_guide.html
 
