@@ -56,10 +56,64 @@ Derivado de su arquitectura, el comportamiento bajo carga es muy diferente:
 | **Configuración** | Descentralizada (`.htaccess`). Flexible pero más lenta. | Centralizada (`nginx.conf`). Más rápida y segura. |
 | **Punto Fuerte** | Flexibilidad y módulos dinámicos. | Velocidad, concurrencia y contenido estático. |
 ## 3. Esquema de Red
-Servidor con doble interfaz de red:
-* **Interna:** Administración y red local confiable.
-* **Externa:** Tráfico público de Internet.
+### 3. Esquema de Red
+Para garantizar la seguridad y el aislamiento de los servicios, no hemos conectado el servidor a la red de forma plana. Hemos implementado una arquitectura de Host de Doble Base (Dual-Homed Host), donde el servidor Nginx actúa como un punto de control de tráfico entre dos zonas diferenciadas.
 
+El servidor dispone de dos tarjetas de red (NICs) físicas o virtuales, cada una con un propósito específico:
+
+### 3.1. Detalle de Interfaces
+Interfaz Externa (WAN / Pública)
+
+Propósito: Es la cara visible del servidor hacia Internet.
+
+Configuración: Recibe las peticiones de cualquier usuario del mundo.
+
+Restricciones: En esta interfaz, Nginx está configurado para ser extremadamente restrictivo. Solo permite el tráfico hacia www.web1.org (nuestro portal público) y bloquea por defecto cualquier intento de conexión a la intranet o al sitio web2.
+
+Interfaz Interna (LAN / Privada)
+
+Propósito: Conecta el servidor con la red local de la empresa Servicios Web RC, S.A.
+
+Configuración: Esta interfaz se encuentra en la zona de confianza (Trusted Zone).
+
+Funcionalidad:
+
+Permite a los administradores gestionar el servidor vía SSH.
+
+Es la única vía de acceso para visualizar el sitio corporativo interno www.web2.org.
+
+Permite a los empleados acceder al área privada de web1 sin necesidad de introducir contraseñas (autenticación basada en IP).
+
+### 3.2. Topología Lógica
+El siguiente diagrama ilustra cómo Nginx filtra el tráfico dependiendo de la interfaz por la que entra la petición:
+
+
+                      INTERNET (Público)
+                             |
+                             v
+                  +----------------------+
+                  |   Cliente Externo    |
+                  +----------+-----------+
+                             |
+                     (Petición HTTP/S)
+                             |
+      -----------------------+----------------------- FIREWALL / PERÍMETRO
+                             |
+                  +----------v-----------+
+                  |  NIC 1 (Externa)     |
+                  |                      |
+                  |    SERVIDOR NGINX    |
+                  |                      |
+                  |  NIC 2 (Interna)     |
+                  +----------+-----------+
+                             ^
+                             |
+             (Acceso Admin + Web1 + Web2)
+                             |
+                  +----------+-----------+
+                  |   Cliente Interno    |
+                  |  (Red 192.168.1.0)   |
+                  +----------------------+
 
 
 ## 4. Instalación
