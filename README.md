@@ -29,7 +29,7 @@ En este documento recjo el estudio  y la implementación práctica de la migraci
 En este  proyecto simulo un entorno real donde la seguridad es prioritaria.  Hemos diseñado reglas de control de accesos que diferencian entre el tráfico de la red interna (administración) y la red externa (pública),añadiendo además protocolos seguros (SSL/TLS) y sistemas de autenticación para áreas privadas.
 
 ## 2. Comparativa con Apache
-### 2. Comparativa con Apache
+
 Para entender el cambio en Servicios Web RC, S.A.,  contrasto cómo operan ambos servidores . Aunque Apache ha sido el estándar de la industria durante décadas por su flexibilidad, Nginx surgió para resolver problemas de escalabilidad que Apache no podía gestionar eficientemente.
 
 
