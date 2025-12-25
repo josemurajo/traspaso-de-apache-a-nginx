@@ -116,7 +116,7 @@ El siguiente diagrama ilustra cómo Nginx filtra el tráfico dependiendo de la i
 
 
 ## 4. Instalación
-### paso1: cambiamos de apache a nginx
+### paso1: Detener Apache para la migracion
  Detener el servicio Apache
 ```
 sudo systemctl stop apache2
