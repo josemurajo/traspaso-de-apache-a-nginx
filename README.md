@@ -117,15 +117,15 @@ El siguiente diagrama ilustra cómo Nginx filtra el tráfico dependiendo de la i
 
 ## 4. Instalación
 ### paso1: cambiamos de apache a nginx
-1. Detener el servicio Apache
+ Detener el servicio Apache
 ```
 sudo systemctl stop apache2
 ```
-* 2. Deshabilitar el arranque automático
+ Deshabilitar el arranque automático
 ```
 sudo systemctl disable apache2
 ```
-* 3.  Verificamos que los puertos 80/443 están libres
+  Verificamos que los puertos 80/443 están libres
 ```
 sudo lsof -i :80
 ```
