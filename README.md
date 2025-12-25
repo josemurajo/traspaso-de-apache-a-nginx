@@ -22,31 +22,31 @@
 ---
 
 ## 1. Introducción
-Tras mi incorporación al equipo técnico de Servicios Web RC, S.A. en Srvilla, se ha detectado la necesidad de optimizar nuestra infraestructura web actual, basada históricamente en Apache. Con el objetivo de mejorar el rendimiento y la gestión de la concurrencia, la empresa ha planteado la migración estratégica hacia Nginx.
+Tras mi incorporación al equipo técnico de Servicios Web RC, S.A. en Srvilla, se ha detectado la necesidad de optimizar la infraestructura web actual, basada  en Apache. Con el objetivo de mejorar el rendimiento y la gestión de la concurrencia, la empresa ha planteado la migración  hacia Nginx.
 
-Este documento recoge el estudio técnico y la implementación práctica de dicha migración. No se trata solo de una instalación de software, sino del despliegue de una arquitectura de servidor robusta capaz de gestionar múltiples dominios (web1 y web2) bajo un mismo punto de acceso.
+En este documento recjo el estudio  y la implementación práctica de la migración. No se trata solo de una instalación de software, sino del despliegue de una arquitectura de servidor robusta capaz de gestionar múltiples dominios (web1 y web2) bajo un mismo punto de acceso.
 
-El proyecto simula un entorno de producción real donde la seguridad es prioritaria. Para ello, hemos diseñado reglas de control de acceso granulares que diferencian entre el tráfico de la red interna (administración) y la red externa (pública), implementando además protocolos seguros (SSL/TLS) y sistemas de autenticación para áreas privadas.
+En este  proyecto simulo un entorno real donde la seguridad es prioritaria.  Hemos diseñado reglas de control de accesos que diferencian entre el tráfico de la red interna (administración) y la red externa (pública),añadiendo además protocolos seguros (SSL/TLS) y sistemas de autenticación para áreas privadas.
 
 ## 2. Comparativa con Apache
 ### 2. Comparativa con Apache
-Para entender la motivación del cambio en Servicios Web RC, S.A., es fundamental contrastar cómo operan ambos servidores bajo el capó. Aunque Apache ha sido el estándar de la industria durante décadas por su flexibilidad, Nginx surgió para resolver problemas de escalabilidad que Apache no podía gestionar eficientemente.
+Para entender el cambio en Servicios Web RC, S.A.,  contrasto cómo operan ambos servidores . Aunque Apache ha sido el estándar de la industria durante décadas por su flexibilidad, Nginx surgió para resolver problemas de escalabilidad que Apache no podía gestionar eficientemente.
 
-A continuación, desglosamos las diferencias clave:
+
 
 ### 2.1. Arquitectura: Hilos vs. Eventos
-La diferencia más radical está en cómo gestionan las peticiones de los usuarios.
+La diferencia más grande está en cómo gestionan las peticiones de los usuarios.
 
-* **Apache (Modelo basado en Procesos/Hilos):** Imagina que Apache es una tienda donde, por cada cliente que entra, se contrata a un empleado exclusivo para atenderlo hasta que se vaya. Si entran 100 clientes, necesitas 100 empleados (hilos/procesos). Esto consume mucha memoria y CPU, y si llegan demasiados clientes, la tienda se colapsa porque no caben más empleados. Es un modelo bloqueante: si el empleado espera a que el cliente decida, no hace nada más.
+* **Apache (Modelo basado en Procesos/Hilos):** Imagina que Apache es una tienda donde, por cada cliente que entra, se contrata a un empleado  para atenderlo hasta que se vaya. Si entran 100 clientes, necesitas 100 empleados (hilos/procesos). Esto consume mucha memoria y CPU, y si llegan demasiados clientes, la tienda se colapsa porque no caben más empleados. Es un modelo bloqueante: si el empleado espera a que el cliente decida, no hace nada más.
 
-* **Nginx (Modelo basado en Eventos y Asíncrono):** Nginx funciona como un solo camarero extremadamente eficiente y rápido que atiende a cientos de mesas a la vez. No se queda esperando en una mesa; toma nota, va a otra, sirve un plato y vuelve. Técnicamente, utiliza una arquitectura asíncrona y no bloqueante. Un solo proceso "worker" puede gestionar miles de conexiones simultáneas. Esto lo hace mucho más ligero y eficiente en el uso de recursos del sistema.
+* **Nginx (Modelo basado en Eventos y Asíncrono):** Nginx funciona como un solo camarero  eficiente y rápido que atiende a cientos de mesas a la vez. No se queda esperando en una mesa; toma nota, va a otra, sirve un plato y regresa . Técnicamente, utiliza una arquitectura asíncrona y no bloqueante . Un solo proceso "worker" puede gestionarmuchas de las conexiones simultáneas. Esto lo hace mucho más ligero y eficiente en el uso de recursos del sistema.
 
 ### 2.2. Rendimiento y Concurrencia
 Derivado de su arquitectura, el comportamiento bajo carga es muy diferente:
 
-* **Gestión de Conexiones:** Apache empieza a sufrir cuando el tráfico aumenta drásticamente (el famoso problema C10k), ya que la memoria RAM se agota al crear tantos procesos. Nginx, en cambio, mantiene un consumo de RAM casi plano y predecible, incluso cuando hay miles de usuarios conectados a la vez.
+* **Gestión de Conexiones:** Apache empieza a sufrir cuando el tráfico aumenta  (el famoso problema C10k), ya que la memoria RAM se agota al crear tantos procesos. Nginx, en cambio, mantiene un consumo de RAM casi plano y predecible, incluso cuando hay miles de usuarios conectados a la vez.
 
-* **Contenido Estático vs. Dinámico:** Nginx es el rey indiscutible sirviendo archivos estáticos (imágenes, CSS, HTML, PDF). Lo hace mucho más rápido y con menos carga que Apache.
+* **Contenido Estático vs. Dinámico:** Nginx es mejor  sirviendo archivos estáticos (imágenes, CSS, HTML, PDF) . Lo hace mucho más rápido y con menos carga que Apache.
 
 ### 2.3. Tabla Resumen
 | Característica | Apache HTTP Server | Nginx |
@@ -57,9 +57,8 @@ Derivado de su arquitectura, el comportamiento bajo carga es muy diferente:
 | **Punto Fuerte** | Flexibilidad y módulos dinámicos. | Velocidad, concurrencia y contenido estático. |
 ## 3. Esquema de Red
 ### 3. Esquema de Red
-Para garantizar la seguridad y el aislamiento de los servicios, no hemos conectado el servidor a la red de forma plana. Hemos implementado una arquitectura de Host de Doble Base (Dual-Homed Host), donde el servidor Nginx actúa como un punto de control de tráfico entre dos zonas diferenciadas.
+Para asegurar la seguridad y el aislamiento de los servicios, no hemos conectado el servidor a la red de forma plana.añadimos  una arquitectura de Host de Doble Base (Dual-Homed Host), donde el servidor Nginx actúa como un punto de control de tráfico entre dos zonas diferenciadas.
 
-El servidor dispone de dos tarjetas de red (NICs) físicas o virtuales, cada una con un propósito específico:
 
 ### 3.1. Detalle de Interfaces
 Interfaz Externa (WAN / Pública)
@@ -153,14 +152,14 @@ sudo ln -s /etc/nginx/sites-available/web2.conf /etc/nginx/sites-enabled/
 Para habilitar el protocolo HTTPS en el sitio www.web1.org, se deben generar el [Certificado publico](./web1.crt) y la [Clave privada ](./web1.key) siguiendo estos pasos:
 
 ##### 1. Instalación de la herramienta
-Primero, asegúrate de tener instalado el paquete OpenSSL en tu sistema Linux:
+Primero, me aseguro  de tener instalado el paquete OpenSSL en tu sistema Linux:
 
 
 sudo apt update && sudo apt install openssl -y
 
 ##### 2. Ejecución del comando de generación
 
-Utilizaremos un único comando para crear ambos archivos [Certificado publico](./web1.crt) y [Clave privada ](./web1.key). Ejecutando  en la terminal:
+utilizamos un único comando para crear ambos archivos [Certificado publico](./web1.crt) y [Clave privada ](./web1.key).
 
 
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout web1.key -out web1.crt
@@ -169,7 +168,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout web1.key -out web1.c
 
 req -x509: Especifica que queremos crear un certificado autofirmado estándar.
 
--nodes: (No DES) Evita que la clave privada se cifre con una contraseña. Esto es fundamental para que Nginx pueda leer la clave y arrancar el servicio automáticamente sin intervención humana.
+-nodes: (No DES) Evita que la clave privada se cifre con una contraseña. Esto es  para que Nginx pueda leer la clave y arrancar el servicio automáticamente sin intervención humana.
 
 -days 365: Define la duración de la validez del certificado (un año).
 
@@ -192,23 +191,25 @@ Clave privada: /etc/ssl/private/[web1.key](./web1.key)
 
 Certificado: /etc/ssl/certs/[web1.crt](./web1.crt)
 
-Certificados: Generar web1.key y web1.crt mediante OpenSSL y moverlos :
+Certificados: Generar web1.key y web1.crt mediante OpenSSL y moverlos a :
 /etc/ssl/certs/ y /etc/ssl/private/.
 
-Contraseñas: Crear el archivo  para la autenticación del directorio privado:
+###### Contraseñas: Crear el archivo  para la autenticación del directorio privado:
 
 sudo htpasswd -c /etc/nginx/[.htpasswd](./.htpasswd) jose
 
 Paso 5: Verificación y Reinicio
-Finalmente, comprobamos que no haya errores de sintaxis y reiniciamos el servicio para aplicar todos los cambios:
+Miramos que no haya errores de sintaxis y reiniciamos el servicio para aplicar todos los cambios:
 
 sudo nginx -t
 
 sudo systemctl restart nginx
 
-Este proceso es el que realiza de forma automática el escript creado al que he llamado  script de despliegue: 
+Este proceso es el que se realiza de forma automática el escript creado al que he llamado  script de despliegue: 
 
-desplegar_todo.sh.
+para un deplay rapido podemos usar el fichero
+
+[ desplegar_todo.sh](./desplegar_todo.sh)
 
 se puede usar para tener al momento y hacer las comprovaciones
 
@@ -216,8 +217,8 @@ se puede usar para tener al momento y hacer las comprovaciones
 ## 5. Casos Prácticos
 <a name="virtual-hosting"></a>
 
-Virtual Hosting
-Se han configurado dos sitios virtuales accesibles por nombre de dominio:
+### Virtual Hosting
+he configurado los dos sitios virtuales accesibles por nombre de dominio:
 
 Sitio 1: www.web1.org -> [Configuración Sitio 1](./web1.conf)
 
@@ -228,14 +229,14 @@ Sitio 2: www.web2.org -> [Configuración Sitio 2](./web2.conf)
 
 <a name="autorización-por-red"></a>
 
-Autorización por Red
-Siguiendo los requisitos de seguridad:
+### Autorización por Red
+#### Siguiendo los requisitos de seguridad:
 
-Red Interna: Tiene acceso total a ambos dominios.
+* **Red Interna:** Tiene acceso total a ambos dominios.
 
-Red Externa: Puede acceder a www.web1.org, pero tiene el acceso denegado a www.web2.org.
+* **Red Externa:** Puede acceder a www.web1.org, pero tiene el acceso denegado a www.web2.org.
 
-esto se ve en: [web2.conf](./web2.conf)
+esto se ve eneste fichero : [web2.conf](./web2.conf)
 
 
 allow 192.168.1.0/24; # Red interna
@@ -248,11 +249,11 @@ deny all;             # Bloqueo para red externa
 ## Autorización en Directorio Privado
 ### Configuración del acceso al directorio web1/privado/:
 
-Cliente Red Interna: Accede sin pedir credenciales.
+Cliente Red Interna: puede Acceder sin pedir credenciales.
 
-Cliente Red Externa: Se le solicitan credenciales de acceso.
+Cliente Red Externa: Se le solicitan credenciales de acceso para que pueda ingresar.
 
-Código aplicado en: [web1.conf](./web1.conf):
+* lo podemos ver en el fichero : [web1.conf](./web1.conf):
 
 
 
@@ -285,7 +286,8 @@ location /privado {
 
 
 ## 6. Scripts de Despliegue
-Para cumplir con la automatización del despliegue:
+he echo una automatización del despliegue usando los pasos utilizados en el punto 4 
+para hecer un deploy mas dinamico para la empresa 
 
 [para un deplay rapido](./desplegar_todo.sh)
 
