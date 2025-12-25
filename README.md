@@ -119,17 +119,17 @@ El siguiente diagrama ilustra cómo Nginx filtra el tráfico dependiendo de la i
 
 ### Paso 1: Instalación del Servidor
 Actualizamos los repositorios e instalamos el paquete de Nginx:
-
+```
 sudo apt update && sudo apt install nginx -y
-
+```
 ### Paso 2: Creación de la Estructura de Directorios
 
 Creamos las carpetas donde se alojarán los archivos HTML de cada sitio, incluyendo el directorio protegido:
-
+```
 sudo mkdir -p /var/www/web1/privado
 
 sudo mkdir -p /var/www/web2
-
+```
 Puedes ver un ejemplo del contenido aquí: [index.html](./web2/index.html) de [index.html](./web1/privado/index.html)
 
 ### Paso 3: Despliegue de Configuraciones (Virtual Hosts)
@@ -140,12 +140,12 @@ Copiar [Configuración Sitio 1](./web1.conf) y [Configuración Sitio 2](./web2.c
 
 Activar los sitios:
 
-
+```
 
 sudo ln -s /etc/nginx/sites-available/web1.conf /etc/nginx/sites-enabled/
 
 sudo ln -s /etc/nginx/sites-available/web2.conf /etc/nginx/sites-enabled/
-
+```
 ### Paso 4: Configuración de Seguridad (SSL y Usuarios)
 
 #### Generación de Certificados SSL/TLS (OpenSSL)
@@ -153,20 +153,20 @@ Para habilitar el protocolo HTTPS en el sitio www.web1.org, se deben generar el 
 
 ##### 1. Instalación de la herramienta
 Primero, me aseguro  de tener instalado el paquete OpenSSL en tu sistema Linux:
-
+```
 
 sudo apt update && sudo apt install openssl -y
-
+```
 ##### 2. Ejecución del comando de generación
 
 utilizamos un único comando para crear ambos archivos [Certificado publico](./web1.crt) y [Clave privada ](./web1.key).
 
-
+```
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout web1.key -out web1.crt
-
+```
 ##### 3. Explicación de los parámetros utilizados:
 
-req -x509: Especifica que queremos crear un certificado autofirmado estándar.
+-req -x509: Especifica que queremos crear un certificado autofirmado estándar.
 
 -nodes: (No DES) Evita que la clave privada se cifre con una contraseña. Esto es  para que Nginx pueda leer la clave y arrancar el servicio automáticamente sin intervención humana.
 
@@ -195,16 +195,16 @@ Certificados: Generar web1.key y web1.crt mediante OpenSSL y moverlos a :
 /etc/ssl/certs/ y /etc/ssl/private/.
 
 ###### Contraseñas: Crear el archivo  para la autenticación del directorio privado:
-
+```
 sudo htpasswd -c /etc/nginx/[.htpasswd](./.htpasswd) jose
-
+```
 Paso 5: Verificación y Reinicio
 Miramos que no haya errores de sintaxis y reiniciamos el servicio para aplicar todos los cambios:
-
+```
 sudo nginx -t
 
 sudo systemctl restart nginx
-
+```
 Este proceso es el que se realiza de forma automática el escript creado al que he llamado  script de despliegue: 
 
 para un deplay rapido podemos usar el fichero
@@ -237,13 +237,14 @@ Sitio 2: www.web2.org -> [Configuración Sitio 2](./web2.conf)
 * **Red Externa:** Puede acceder a www.web1.org, pero tiene el acceso denegado a www.web2.org.
 
 esto se ve eneste fichero : [web2.conf](./web2.conf)
-
+```
 
 allow 192.168.1.0/24; # Red interna
 
 allow 127.0.0.1;
 
 deny all;             # Bloqueo para red externa
+```
 <a name="autorización-en-directorio-privado"></a>
 
 ## Autorización en Directorio Privado
@@ -255,7 +256,7 @@ Cliente Red Externa: Se le solicitan credenciales de acceso para que pueda ingre
 
 * lo podemos ver en el fichero : [web1.conf](./web1.conf):
 
-
+```
 
 location /privado {
 
@@ -270,7 +271,7 @@ location /privado {
     auth_basic_user_file /etc/nginx/.htpasswd; # Ver fichero [.htpasswd](./.htpasswd)
     
 }
-
+```
 <a name="seguridad-ssltls"></a>
 
 
