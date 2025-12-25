@@ -22,12 +22,39 @@
 ---
 
 ## 1. Introducción
-Este proyecto documenta la migración y despliegue de un servidor Nginx diseñado para gestionar múltiples dominios con diferentes niveles de seguridad y acceso.
+Tras mi incorporación al equipo técnico de Servicios Web RC, S.A. en Srvilla, se ha detectado la necesidad de optimizar nuestra infraestructura web actual, basada históricamente en Apache. Con el objetivo de mejorar el rendimiento y la gestión de la concurrencia, la empresa ha planteado la migración estratégica hacia Nginx.
+
+Este documento recoge el estudio técnico y la implementación práctica de dicha migración. No se trata solo de una instalación de software, sino del despliegue de una arquitectura de servidor robusta capaz de gestionar múltiples dominios (web1 y web2) bajo un mismo punto de acceso.
+
+El proyecto simula un entorno de producción real donde la seguridad es prioritaria. Para ello, hemos diseñado reglas de control de acceso granulares que diferencian entre el tráfico de la red interna (administración) y la red externa (pública), implementando además protocolos seguros (SSL/TLS) y sistemas de autenticación para áreas privadas.
 
 ## 2. Comparativa con Apache
-* **Arquitectura:** Nginx usa un modelo basado en eventos (más ligero).
-* **Rendimiento:** Mejor gestión de conexiones simultáneas que Apache.
+### 2. Comparativa con Apache
+Para entender la motivación del cambio en Servicios Web RC, S.A., es fundamental contrastar cómo operan ambos servidores bajo el capó. Aunque Apache ha sido el estándar de la industria durante décadas por su flexibilidad, Nginx surgió para resolver problemas de escalabilidad que Apache no podía gestionar eficientemente.
 
+A continuación, desglosamos las diferencias clave:
+
+### 2.1. Arquitectura: Hilos vs. Eventos
+La diferencia más radical está en cómo gestionan las peticiones de los usuarios.
+
+* **Apache (Modelo basado en Procesos/Hilos):** Imagina que Apache es una tienda donde, por cada cliente que entra, se contrata a un empleado exclusivo para atenderlo hasta que se vaya. Si entran 100 clientes, necesitas 100 empleados (hilos/procesos). Esto consume mucha memoria y CPU, y si llegan demasiados clientes, la tienda se colapsa porque no caben más empleados. Es un modelo bloqueante: si el empleado espera a que el cliente decida, no hace nada más.
+
+* **Nginx (Modelo basado en Eventos y Asíncrono):** Nginx funciona como un solo camarero extremadamente eficiente y rápido que atiende a cientos de mesas a la vez. No se queda esperando en una mesa; toma nota, va a otra, sirve un plato y vuelve. Técnicamente, utiliza una arquitectura asíncrona y no bloqueante. Un solo proceso "worker" puede gestionar miles de conexiones simultáneas. Esto lo hace mucho más ligero y eficiente en el uso de recursos del sistema.
+
+### 2.2. Rendimiento y Concurrencia
+Derivado de su arquitectura, el comportamiento bajo carga es muy diferente:
+
+* **Gestión de Conexiones:** Apache empieza a sufrir cuando el tráfico aumenta drásticamente (el famoso problema C10k), ya que la memoria RAM se agota al crear tantos procesos. Nginx, en cambio, mantiene un consumo de RAM casi plano y predecible, incluso cuando hay miles de usuarios conectados a la vez.
+
+* **Contenido Estático vs. Dinámico:** Nginx es el rey indiscutible sirviendo archivos estáticos (imágenes, CSS, HTML, PDF). Lo hace mucho más rápido y con menos carga que Apache.
+
+### 2.3. Tabla Resumen
+| Característica | Apache HTTP Server | Nginx |
+| :--- | :--- | :--- |
+| **Arquitectura** | Crea un proceso/hilo por cada conexión (Síncrono). | Basado en eventos asíncronos (Asíncrono). |
+| **Consumo de Memoria** | Alto. Crece con cada usuario nuevo. | Bajo y constante. Muy eficiente. |
+| **Configuración** | Descentralizada (`.htaccess`). Flexible pero más lenta. | Centralizada (`nginx.conf`). Más rápida y segura. |
+| **Punto Fuerte** | Flexibilidad y módulos dinámicos. | Velocidad, concurrencia y contenido estático. |
 ## 3. Esquema de Red
 Servidor con doble interfaz de red:
 * **Interna:** Administración y red local confiable.
