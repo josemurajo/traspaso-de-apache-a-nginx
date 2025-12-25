@@ -210,7 +210,7 @@ Certificados: Generar web1.key y web1.crt mediante OpenSSL y moverlos a :
 ```
 sudo htpasswd -c /etc/nginx/[.htpasswd](./.htpasswd) jose
 ```
-Paso 5: Verificación y Reinicio
+ Verificación y Reinicio
 Miramos que no haya errores de sintaxis y reiniciamos el servicio para aplicar todos los cambios:
 ```
 sudo nginx -t
